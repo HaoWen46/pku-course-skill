@@ -1,0 +1,15 @@
+[project]
+name = "pku-course-skill"
+version = "0.2.1"
+description = "Read-only PKU course retrieval for agents."
+requires-python = ">=3.11"
+dependencies = ["beautifulsoup4==4.14.3"]
+
+[tool.uv]
+package = false
+required-version = ">=0.10.0"
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
