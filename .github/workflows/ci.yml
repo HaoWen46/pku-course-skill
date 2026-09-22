@@ -35,7 +35,5 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install -r requirements.txt
-      - name: Inspect public filter structure
-        run: python tests/form_probe.py
       - name: Exercise all commands against PKU
         run: python tests/live.py

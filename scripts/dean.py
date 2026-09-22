@@ -185,7 +185,7 @@ class HTTP:
 def choices(soup: BeautifulSoup, field: str, label: str) -> list[tuple[str, str]]:
     candidates = list(soup.select(f'[name="{field}"],#{field},[data-filter="{field}"]'))
     candidates += [s.parent for s in soup.find_all(string=re.compile(r"^\s*" + re.escape(label) + r"\s*[:：]?\s*$"))]
-    attrs = ("value", "val", "data-value", "data-val", "data-id", "rel")
+    attrs = ("value", "val", "data", "data-value", "data-val", "data-id", "rel")
     for start in candidates:
         scope = start
         for _ in range(5):
@@ -195,7 +195,7 @@ def choices(soup: BeautifulSoup, field: str, label: str) -> list[tuple[str, str]
             if any(n.get("name") in {"yearandseme", "yuanxi", "coursetype"} - {field} for n in unrelated):
                 break
             found = []
-            for n in scope.select('option,li[value],li[val],a[value],a[val],[data-value],[data-val],[data-id],li[rel]'):
+            for n in scope.select('option,span[data],li[value],li[val],a[value],a[val],[data-value],[data-val],[data-id],li[rel]'):
                 raw = next((n.get(a) for a in attrs if n.has_attr(a)), None)
                 if isinstance(raw, list):
                     raw = " ".join(raw)
