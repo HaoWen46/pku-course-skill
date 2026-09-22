@@ -141,7 +141,7 @@ class Packaging(unittest.TestCase):
         self.assertIn('description:', skill.split('---', 2)[1])
 
     def test_documented_files_exist(self):
-        for file in ('scripts/pku.py', 'scripts/dean.py', 'scripts/output.py', 'requirements.txt', 'references/sources.md', 'references/review.md'):
+        for file in ('scripts/pku.py', 'scripts/dean.py', 'scripts/output.py', 'pyproject.toml', 'uv.lock', 'references/sources.md', 'references/review.md'):
             self.assertTrue((ROOT / file).is_file(), file)
 
     def test_no_translations_or_database_scaffolding(self):
@@ -151,8 +151,8 @@ class Packaging(unittest.TestCase):
     def test_readme_has_install_and_verification_commands(self):
         readme = (ROOT / 'README.md').read_text()
         self.assertIn('.agents/skills/pku-course-skill', readme)
-        self.assertIn('python -m unittest discover', readme)
-        self.assertIn('python tests/live.py', readme)
+        self.assertIn('uv run --locked python -m unittest discover', readme)
+        self.assertIn('uv run --locked tests/live.py', readme)
 
 
 if __name__ == '__main__':

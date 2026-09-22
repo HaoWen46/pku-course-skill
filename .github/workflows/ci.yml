@@ -6,7 +6,42 @@ on:
 permissions:
   contents: read
 jobs:
-  uv-bootstrap:
+  tests:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: '3.11'
+            uv: '0.10.0'
+          - os: ubuntu-latest
+            python: '3.13'
+            uv: '0.12.3'
+          - os: macos-latest
+            python: '3.13'
+            uv: '0.12.3'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+        with:
+          version: ${{ matrix.uv }}
+          python-version: ${{ matrix.python }}
+          enable-cache: false
+      - run: uv --version
+      - run: uv sync --locked
+      - run: uv run --locked python -m unittest discover -s tests -v
+      - run: uv run --locked tests/uv_smoke.py
+      - run: uv lock --check --offline
+      - name: Audit locked dependencies
+        if: matrix.os == 'ubuntu-latest' && matrix.uv == '0.12.3'
+        run: uv audit --locked
+      - run: git diff --exit-code
+  live-source:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -15,13 +50,9 @@ jobs:
           persist-credentials: false
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
         with:
-          version: '0.10.0'
-          python-version: '3.11'
+          version: '0.12.3'
+          python-version: '3.13'
           enable-cache: false
-      - name: Generate dependency lock for review
-        run: |
-          uv --version
-          uv lock
-          cat uv.lock
       - run: uv sync --locked
-      - run: uv run --locked python -m unittest discover -s tests -v
+      - run: uv run --locked tests/live.py
+      - run: git diff --exit-code

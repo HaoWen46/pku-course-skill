@@ -49,8 +49,12 @@ def main(argv=None, client=None) -> int:
     try:
         import dean
         import output
-    except ModuleNotFoundError:
-        print('{"error":{"code":"dependency_missing","message":"Install requirements.txt with this Python interpreter."}}', file=sys.stderr)
+    except ModuleNotFoundError as exc:
+        if exc.name in {"dean", "output"}:
+            error = {"code": "installation_incomplete", "message": "Local skill modules are missing; restore the complete skill directory."}
+        else:
+            error = {"code": "dependency_missing", "message": "Run with uv run --locked --project <skill-dir> <skill-dir>/scripts/pku.py; do not install dependencies into system Python."}
+        print(json.dumps({"error": error}), file=sys.stderr)
         return 2
     try:
         client = client or dean.Client()
