@@ -1,5 +1,7 @@
 # pku-course-skill
 
+English | [简体中文](README.zh-CN.md)
+
 Agent contract: [SKILL.md](SKILL.md). Requires [uv](https://docs.astral.sh/uv/getting-started/installation/) 0.10.0+ and Linux, macOS, or WSL. uv selects Python 3.11+ and installs the committed dependencies; no manual environment activation.
 
 ## Install
